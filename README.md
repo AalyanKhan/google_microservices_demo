@@ -94,7 +94,7 @@ This e-commerce application consists of 11 microservices:
 ### Quick Start
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/AalyanKhan/google_microservices_demo.git
 cd google_microservices_demo
 
 # Build a single service (example: currency service)
