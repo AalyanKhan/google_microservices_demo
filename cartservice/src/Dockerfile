@@ -23,7 +23,7 @@ COPY . ./
 RUN dotnet publish -c Release -r linux-x64 --self-contained true -o /app/publish
 
 # Use the official ASP.NET Core runtime image to run the application
-FROM mcr.microsoft.com/dotnet/runtime-deps:8.0.100-jammy-chiseled AS final
+FROM mcr.microsoft.com/dotnet/runtime-deps:9.0-jammy-chiseled AS final
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -35,6 +35,8 @@ COPY --from=builder /app/publish .
 USER 65532
 # Expose the port the application listens on
 EXPOSE 8080
+
+# Should we add health checks here? Or leave it to orchestration level?
 
 CMD ["./cartservice"]
 
