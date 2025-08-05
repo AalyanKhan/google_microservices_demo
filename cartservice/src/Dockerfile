@@ -1,5 +1,5 @@
 # Use the official .NET SDK image to build the application
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -23,7 +23,7 @@ COPY . ./
 RUN dotnet publish -c Release -r linux-x64 --self-contained true -o /app/publish
 
 # Use the official ASP.NET Core runtime image to run the application
-FROM mcr.microsoft.com/dotnet/runtime-deps:9.0-jammy-chiseled AS final
+FROM mcr.microsoft.com/dotnet/runtime-deps:8.0.11-jammy-chiseled AS final
 
 # Set the working directory inside the container
 WORKDIR /app
