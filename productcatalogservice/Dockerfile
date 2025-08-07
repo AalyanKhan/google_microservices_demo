@@ -1,15 +1,28 @@
-FROM golang:1.23
+# --- BUILDER STAGE ---
+FROM golang:1.23.4-alpine AS builder
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+# Install git and ca-certificates for go mod and HTTPS
+RUN apk add --no-cache ca-certificates git
 
+COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
 
-RUN go build -o productcatalogservice .
+# Build static binary
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o productcatalogservice .
 
-EXPOSE 3550
+# --- FINAL STAGE ---
+FROM gcr.io/distroless/static-debian12:nonroot
 
-CMD ["./productcatalogservice"]
+# Copy binary and certs
+COPY --from=builder /app/productcatalogservice /productcatalogservice
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+USER 65532
+
+EXPOSE 8080
+
+CMD ["/productcatalogservice"]
