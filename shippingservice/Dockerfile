@@ -10,7 +10,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build CGO_ENABLED=0 GOOS=linux -ldflags="-s -w" -o shippingservice .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o shippingservice .
 
 FROM gcr.io/distroless/static-debian12:nonroot
 
@@ -22,6 +22,3 @@ USER 65532
 EXPOSE 8080
 
 CMD ["/shippingservice"]
-
-
-
