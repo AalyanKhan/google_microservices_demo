@@ -1,15 +1,19 @@
-FROM node:20
+FROM node:20.18.0-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci --only=production && npm cache clean --force
 
 COPY . .
 
-EXPOSE 50051
+FROM gcr.io/distroless/node20-debian12:nonroot
 
 
-CMD ["node","index.js"]
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app ./
 
+USER 65532
+
+CMD [ "node", "index.js" ]
