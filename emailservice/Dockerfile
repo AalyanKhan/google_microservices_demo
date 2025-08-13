@@ -1,11 +1,27 @@
-FROM python:3.11
+# Use the official Python image from the Docker Hub
+
+FROM python:3.11-slim-bookworm AS builder
 
 WORKDIR /app
 
+# Install and create a non-root user in the builder to avoid permission issues
+RUN useradd --create-home --shell /bin/bash --uid 1000 appuser
+
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies for the application
+RUN pip install --no-cache-dir --user --requirement requirements.txt
 
-COPY . .
+FROM python:3.11.10-slim-bookworm
 
-CMD ["python","email_server.py"]
+WORKDIR /app
+
+COPY --from=builder /home/app/.local /app/.local
+COPY --chown=1000:1000 . .
+
+ENV PATH=/app/.local/bin:$PATH
+
+# Switch to the non-root user
+USER 1000
+
+CMD ["python", "email_service.py"]
