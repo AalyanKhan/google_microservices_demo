@@ -1,2 +1,22 @@
-FROM openjdk:21-jdk-slim
+FROM openjdk:17.0.12-jdk-slim AS builder
 
+WORKDIR /app
+
+COPY . .
+
+RUN ./gradlew clean build -x test
+
+FROM openjdk:17.0.12-jre-slim
+
+
+RUN useradd --creat-home --shell /bin/false --uid 1000 javauser
+
+USER javauser
+
+WORKDIR /app
+
+COPY --from=builder --chown=1000:1000 /app/build/libs/adservice.jar ./
+
+EXPOSE 9555
+
+CMD ["java", "-jar", "adservice.jar"]
