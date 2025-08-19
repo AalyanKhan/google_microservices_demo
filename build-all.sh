@@ -49,9 +49,10 @@ build_service() {
     
     cd "$service_path"
     
-    # Build the Docker image
-    if docker build -t "$service_name" -f "$dockerfile_path" .; then
-        print_success "$service_name built successfully!"
+    # Build the Docker image with account tag
+    local full_image_name="$DOCKER_ACCOUNT_TAG/$service_name"
+    if docker build -t "$full_image_name" -f "$dockerfile_path" .; then
+        print_success "$service_name built successfully as $full_image_name!"
     else
         print_error "Failed to build $service_name!"
         return 1
@@ -81,6 +82,19 @@ main() {
     # Get the script directory
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     cd "$SCRIPT_DIR"
+    
+    # Ask for Docker account tag
+    echo
+    print_status "Please enter your Docker Hub account tag (e.g., aalyankhan029):"
+    read -p "Docker account tag: " DOCKER_ACCOUNT_TAG
+    
+    if [ -z "$DOCKER_ACCOUNT_TAG" ]; then
+        print_error "Docker account tag cannot be empty!"
+        exit 1
+    fi
+    
+    print_success "Using Docker account tag: $DOCKER_ACCOUNT_TAG"
+    echo
     
     print_status "Starting build process from: $SCRIPT_DIR"
     echo
@@ -148,14 +162,15 @@ main() {
     
     echo
     print_status "📋 Built Services:"
-    docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | grep -E "(adservice|cartservice|checkoutservice|currencyservice|emailservice|frontend|loadgenerator|paymentservice|productcatalogservice|recommendationservice|shippingservice|shoppingassistantservice)" || true
+    docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | grep "$DOCKER_ACCOUNT_TAG" || true
     
     echo
     print_status "🚀 Next Steps:"
-    print_status "1. Test individual services: docker run -p <port>:<port> <service-name>"
-    print_status "2. Create a Docker Compose file for orchestration"
-    print_status "3. Set up service networking and communication"
-    print_status "4. Implement health checks and monitoring"
+    print_status "1. Test individual services: docker run -p <port>:<port> $DOCKER_ACCOUNT_TAG/<service-name>"
+    print_status "2. Push images to Docker Hub: ./push-all.sh"
+    print_status "3. Create a Docker Compose file for orchestration"
+    print_status "4. Set up service networking and communication"
+    print_status "5. Implement health checks and monitoring"
     
     # Exit with appropriate code
     if [ $failure_count -gt 0 ]; then
