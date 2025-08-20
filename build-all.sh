@@ -47,18 +47,14 @@ build_service() {
         return 1
     fi
     
-    cd "$service_path"
-    
     # Build the Docker image with account tag
     local full_image_name="$DOCKER_ACCOUNT_TAG/$service_name"
-    if docker build -t "$full_image_name" -f "$dockerfile_path" .; then
+    if docker build -t "$full_image_name" -f "$dockerfile_path" "$service_path"; then
         print_success "$service_name built successfully as $full_image_name!"
     else
         print_error "Failed to build $service_name!"
         return 1
     fi
-    
-    cd - > /dev/null
 }
 
 # Function to check if Docker is running
