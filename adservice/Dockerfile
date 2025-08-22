@@ -7,7 +7,7 @@ COPY . .
 RUN chmod +x gradlew
 RUN ./gradlew clean build -x test
 
-FROM openjdk:19-jre-slim
+FROM eclipse-temurin:19-jre
 
 
 RUN useradd --creat-home --shell /bin/false --uid 1000 javauser
