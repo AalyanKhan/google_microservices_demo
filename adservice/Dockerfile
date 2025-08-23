@@ -10,7 +10,7 @@ RUN ./gradlew clean build -x test
 FROM eclipse-temurin:19-jre
 
 
-RUN useradd --creat-home --shell /bin/false --uid 1000 javauser
+RUN useradd -m -s /bin/false -u 1000 javauser
 
 USER javauser
 
