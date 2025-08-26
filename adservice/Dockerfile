@@ -21,3 +21,4 @@ COPY --from=builder --chown=1000:1000 /app/build/libs/adservice.jar ./
 EXPOSE 9555
 
 CMD ["java", "-jar", "adservice.jar"]
+
