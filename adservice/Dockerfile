@@ -16,7 +16,7 @@ USER javauser
 
 WORKDIR /app
 
-COPY --from=builder --chown=1000:1000 /app/build/libs/adservice.jar ./
+COPY --from=builder --chown=1000:1000 /app/build/libs/*.jar ./adservice.jar
 
 EXPOSE 9555
 
