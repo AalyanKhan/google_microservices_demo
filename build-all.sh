@@ -3,7 +3,7 @@
 # Google Microservices Demo - Build All Services Script
 # This script builds all microservices in the project for Docker learning
 
-set -e  # Exit on any error
+# Removed set -e to allow script to continue even if individual builds fail
 
 # Colors for output
 RED='\033[0;31m'
@@ -49,8 +49,19 @@ build_service() {
     
     # Build the Docker image with account tag
     local full_image_name="$DOCKER_ACCOUNT_TAG/$service_name"
-    if docker build -t "$full_image_name" -f "$dockerfile_path" "$service_path"; then
+    print_status "Building Docker image: $full_image_name"
+    
+    # Use --no-cache to ensure fresh builds and --progress=plain for better output
+    if docker build --no-cache --progress=plain -t "$full_image_name" -f "$dockerfile_path" "$service_path"; then
         print_success "$service_name built successfully as $full_image_name!"
+        
+        # Verify the image was created
+        if docker images "$full_image_name" --format "{{.Repository}}:{{.Tag}}" | grep -q "$full_image_name"; then
+            print_success "Image verification successful: $full_image_name"
+        else
+            print_error "Image verification failed: $full_image_name not found!"
+            return 1
+        fi
     else
         print_error "Failed to build $service_name!"
         return 1
@@ -116,24 +127,46 @@ main() {
     local failure_count=0
     local failed_services=()
     
-    # Build each service
+    # Build each service sequentially (one after another)
+    local total_services=${#services[@]}
+    local current_service=0
+    
     for service_info in "${services[@]}"; do
         IFS=':' read -r service_name service_path dockerfile_name <<< "$service_info"
         dockerfile_path="$service_path/$dockerfile_name"
+        ((current_service++))
         
         echo
-        print_status "Building service: $service_name"
+        print_status "Building service: $service_name ($current_service/$total_services)"
         print_status "Path: $service_path"
         print_status "Dockerfile: $dockerfile_path"
+        print_status "⏳ Starting build process..."
+        
+        # Record start time
+        local start_time=$(date +%s)
         
         if build_service "$service_name" "$service_path" "$dockerfile_path"; then
             ((success_count++))
+            local end_time=$(date +%s)
+            local duration=$((end_time - start_time))
+            print_success "$service_name completed successfully in ${duration}s!"
         else
             ((failure_count++))
             failed_services+=("$service_name")
+            local end_time=$(date +%s)
+            local duration=$((end_time - start_time))
+            print_error "$service_name failed after ${duration}s!"
         fi
         
         echo "----------------------------------------"
+        
+        # Show progress
+        print_status "Progress: $current_service/$total_services services completed"
+        if [ $current_service -lt $total_services ]; then
+            print_status "⏳ Preparing for next build..."
+            # Small delay to ensure Docker resources are cleaned up
+            sleep 2
+        fi
     done
     
     # Print summary
