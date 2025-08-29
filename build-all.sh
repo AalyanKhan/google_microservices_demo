@@ -51,8 +51,8 @@ build_service() {
     local full_image_name="$DOCKER_ACCOUNT_TAG/$service_name"
     print_status "Building Docker image: $full_image_name"
     
-    # Use --no-cache to ensure fresh builds and --progress=plain for better output
-    if docker build --no-cache --progress=plain -t "$full_image_name" -f "$dockerfile_path" "$service_path"; then
+    # Use --no-cache to ensure fresh builds
+    if docker build --no-cache -t "$full_image_name" -f "$dockerfile_path" "$service_path"; then
         print_success "$service_name built successfully as $full_image_name!"
         
         # Verify the image was created
