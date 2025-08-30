@@ -1,6 +1,9 @@
 # Use the official Python image from the Docker Hub
-
 FROM python:3.11-slim-bookworm AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
