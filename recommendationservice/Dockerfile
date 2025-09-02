@@ -15,7 +15,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 FROM python:3.11.10-slim-bookworm
 
 WORKDIR /app
-COPY --from=builder /home/app/.local /app/.local
+
+COPY --from=builder /root/.local /app/.local
+
 COPY --chown=1000:1000 . .
 
 

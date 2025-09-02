@@ -13,8 +13,7 @@ COPY . .
 
 # --- FINAL STAGE ---
 
-FROM gcr.io/distroless/node20-debian12:nonroot
-
+FROM gcr.io/distroless/nodejs20-debian12:nonroot
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app ./

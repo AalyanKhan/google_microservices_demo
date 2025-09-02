@@ -1,4 +1,5 @@
 FROM node:20.18.0-alpine AS builder
+RUN apk add --no-cache python3 make g++
 
 WORKDIR /app
 

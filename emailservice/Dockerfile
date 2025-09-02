@@ -18,8 +18,8 @@ RUN pip install --no-cache-dir --user --requirement requirements.txt
 FROM python:3.11.10-slim-bookworm
 
 WORKDIR /app
+COPY --from=builder /root/.local /app/.local
 
-COPY --from=builder /home/app/.local /app/.local
 COPY --chown=1000:1000 . .
 
 ENV PATH=/app/.local/bin:$PATH
