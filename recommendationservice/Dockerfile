@@ -10,7 +10,7 @@ RUN useradd --create-home --shell /bin/bash --uid 1000 appuser
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --user -r requirements.txt
 
 FROM python:3.11.10-slim-bookworm
 

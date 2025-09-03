@@ -16,7 +16,7 @@ FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /app
 
 COPY --from=builder /app/checkoutservice ./checkoutservice
-COPY --from=builder /etc/ssl/certs/certificates.crt ./etc/ssl/certs/
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 USER 65532
 
