@@ -29,7 +29,6 @@ services:
       - recommendationservice
       - shippingservice
       - checkoutservice
-      - adservice
       - paymentservice
       - emailservice
       - shoppingassistantservice
@@ -60,6 +59,7 @@ services:
       - "7000:7000"
     environment:
       - PORT=7000
+      - ENABLE_PROFILER=0
     networks:
       - microservices-network
 
@@ -130,6 +130,7 @@ services:
       - "5050:5050"
     environment:
       - PORT=5050
+      - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
       - CART_SERVICE_ADDR=cartservice:7070
       - CURRENCY_SERVICE_ADDR=currencyservice:7000
       - SHIPPING_SERVICE_ADDR=shippingservice:50051
@@ -156,6 +157,8 @@ services:
       - PORT=9555
     networks:
       - microservices-network
+    profiles:
+      - disabled
 
   # Payment Service - Node.js application
   paymentservice:
@@ -167,6 +170,7 @@ services:
       - "8082:8080"
     environment:
       - PORT=8080
+      - ENABLE_PROFILER=0
     networks:
       - microservices-network
 

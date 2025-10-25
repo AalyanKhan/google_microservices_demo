@@ -24,6 +24,10 @@ FROM gcr.io/distroless/static-debian12:nonroot
 
 # Copy the statically-linked binary from the builder stage
 COPY --from=builder /app/frontend /frontend
+# Copy templates directory
+COPY --from=builder /app/templates /templates
+# Copy static directory
+COPY --from=builder /app/static /static
 # Copy certificates for HTTPS
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 

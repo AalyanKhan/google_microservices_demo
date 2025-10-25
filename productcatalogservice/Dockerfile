@@ -19,6 +19,7 @@ FROM gcr.io/distroless/static-debian12:nonroot
 
 # Copy binary and certs
 COPY --from=builder /app/productcatalogservice /productcatalogservice
+COPY --from=builder /app/products.json /products.json
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 USER 65532
