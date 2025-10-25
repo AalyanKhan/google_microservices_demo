@@ -27,8 +27,20 @@ Using the provided `docker-compose.yml` file, you'll learn:
 
 ## 🏗️ Architecture Overview
 
-This e-commerce application consists of 11 microservices:
+This e-commerce application consists of 11 microservices plus Redis cache:
 
+![Microservices Architecture Diagram](architecture-diagram.png)
+
+The architecture diagram above shows the complete microservices ecosystem with the following key components:
+
+### **Service Communication Flow**
+- **User & Load Generator** → **Frontend** (HTTP requests)
+- **Frontend** → **All Backend Services** (gRPC/HTTP)
+- **Checkout Service** → **Payment, Shipping, Email, Cart** (orchestration)
+- **Cart Service** → **Redis Cache** (data persistence)
+- **Recommendation Service** → **Product Catalog** (product data)
+
+### **Text-based Architecture Overview**
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │  Load Generator  │    │  Shopping       │
@@ -52,6 +64,12 @@ This e-commerce application consists of 11 microservices:
          │Service    │  │Service    │  │Service    │
          │(Node.js)  │  │(Python)   │  │(Java)     │
          └───────────┘  └───────────┘  └───────────┘
+                 │
+         ┌───────▼───┐
+         │   Redis   │
+         │   Cache   │
+         │  (Redis)  │
+         └───────────┘
 ```
 
 ## 🚀 Services Overview
@@ -73,6 +91,9 @@ This e-commerce application consists of 11 microservices:
 - **Email Service** (`emailservice/`) - Python service for email notifications
 - **Ad Service** (`adservice/`) - Java service for advertisement management
 - **Shopping Assistant Service** (`shoppingservice/`) - Python service for AI assistance
+
+### Data Storage
+- **Redis Cache** - In-memory data store for cart persistence and session management
 
 ## 📊 Docker Image Optimization Results
 
@@ -249,18 +270,19 @@ done
 ### Service Architecture
 The `docker-compose.yml` file includes all 11 microservices with proper networking:
 
-- **Frontend** (Go) - Port 8080
-- **Product Catalog Service** (Go) - Port 3550
-- **Currency Service** (Node.js) - Port 7000
-- **Cart Service** (.NET) - Port 7070
-- **Recommendation Service** (Python) - Port 8081
-- **Shipping Service** (Go) - Port 50051
-- **Checkout Service** (Go) - Port 5050
-- **Ad Service** (Java) - Port 9555
-- **Payment Service** (Node.js) - Port 8082
-- **Email Service** (Python) - Port 8083
-- **Shopping Assistant Service** (Python) - Port 8084
+- **Frontend** (Go) - Port 8080 - Main web interface
+- **Product Catalog Service** (Go) - Port 3550 - Product management
+- **Currency Service** (Node.js) - Port 7000 - Currency conversion
+- **Cart Service** (.NET) - Port 7070 - Shopping cart functionality
+- **Recommendation Service** (Python) - Port 8081 - Product recommendations
+- **Shipping Service** (Go) - Port 50051 - Shipping calculations
+- **Checkout Service** (Go) - Port 5050 - Order processing
+- **Ad Service** (Java) - Port 9555 - Advertisement management
+- **Payment Service** (Node.js) - Port 8082 - Payment processing
+- **Email Service** (Python) - Port 8083 - Email notifications
+- **Shopping Assistant Service** (Python) - Port 8084 - AI assistance
 - **Load Generator** (Python) - Optional traffic generator
+- **Redis Cache** (Redis) - Port 6379 - Cart data storage
 
 ### Key Features
 
@@ -480,6 +502,12 @@ docker-compose up --build frontend
 
 # Check network connectivity
 docker-compose exec frontend ping productcatalogservice
+
+# Check Redis connectivity
+docker-compose exec cartservice ping redis
+
+# Test Redis connection
+docker-compose exec redis redis-cli ping
 
 # View Docker networks
 docker network ls

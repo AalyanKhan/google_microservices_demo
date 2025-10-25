@@ -31,6 +31,7 @@ services:
       - paymentservice
       - emailservice
       - shoppingassistantservice
+      - redis
     networks:
       - microservices-network
 
@@ -58,6 +59,17 @@ services:
     networks:
       - microservices-network
 
+  # Redis Cache - Cart data storage
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - microservices-network
+
   # Cart Service - .NET application
   cartservice:
     build:
@@ -68,6 +80,9 @@ services:
     environment:
       - ASPNETCORE_HTTP_PORTS=7070
       - ASPNETCORE_URLS=http://+:7070
+      - REDIS_ADDR=redis:6379
+    depends_on:
+      - redis
     networks:
       - microservices-network
 
@@ -187,7 +202,6 @@ networks:
   microservices-network:
     driver: bridge
 
-# Optional: Add volumes for persistent data if needed
-# volumes:
-#   cart-data:
-#   product-data:
+volumes:
+  redis-data:
+    driver: local
