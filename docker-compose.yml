@@ -6,6 +6,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/frontend:${TAG}
     ports:
       - "8080:8080"
     environment:
@@ -40,6 +41,7 @@ services:
     build:
       context: ./productcatalogservice
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/productcatalogservice:${TAG}
     ports:
       - "3550:3550"
     environment:
@@ -52,6 +54,7 @@ services:
     build:
       context: ./currencyservice
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/currencyservice:${TAG}
     ports:
       - "7000:7000"
     environment:
@@ -75,6 +78,7 @@ services:
     build:
       context: ./cartservice/src
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/cartservice:${TAG}
     ports:
       - "7070:7070"
     environment:
@@ -91,6 +95,7 @@ services:
     build:
       context: ./recommendationservice
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/recommendationservice:${TAG}
     ports:
       - "8081:8080"
     environment:
@@ -106,6 +111,7 @@ services:
     build:
       context: ./shippingservice
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/shippingservice:${TAG}
     ports:
       - "50051:50051"
     environment:
@@ -118,6 +124,7 @@ services:
     build:
       context: ./checkoutservice
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/checkoutservice:${TAG}
     ports:
       - "5050:5050"
     environment:
@@ -141,6 +148,7 @@ services:
     build:
       context: ./adservice
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/adservice:${TAG}
     ports:
       - "9555:9555"
     environment:
@@ -153,6 +161,7 @@ services:
     build:
       context: ./paymentservice
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/paymentservice:${TAG}
     ports:
       - "8082:8080"
     environment:
@@ -165,6 +174,7 @@ services:
     build:
       context: ./emailservice
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/emailservice:${TAG}
     ports:
       - "8083:8080"
     environment:
@@ -177,6 +187,7 @@ services:
     build:
       context: ./shoppingassistantservice
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/shoppingassistantservice:${TAG}
     ports:
       - "8084:8080"
     environment:
@@ -189,6 +200,7 @@ services:
     build:
       context: ./loadgenerator
       dockerfile: Dockerfile
+    image: ${IMAGE_PREFIX}/loadgenerator:${TAG}
     environment:
       - FRONTEND_ADDR=frontend:8080
       - USERS=10

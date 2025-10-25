@@ -121,6 +121,79 @@ This project demonstrates advanced Docker optimization techniques, achieving sig
 - **Multi-stage Build Impact**: Reduced total size from 14.88 GB to 1.75 GB
 - **DockerSlim Impact**: Further reduced from 1.75 GB to 528 MB
 
+## 🚀 Docker Compose Configuration & Image Naming
+
+This project now includes advanced Docker Compose configuration with proper image naming and automation scripts for streamlined development and deployment.
+
+### 🏷️ Custom Image Naming
+
+The `docker-compose.yml` file has been configured with environment variables for consistent, clean image naming:
+
+```yaml
+# .env file configuration
+IMAGE_PREFIX=aalyankhan029
+TAG=latest
+```
+
+All services now build with proper Docker Hub naming:
+- `aalyankhan029/frontend:latest`
+- `aalyankhan029/productcatalogservice:latest`
+- `aalyankhan029/cartservice:latest`
+- ... and so on for all 12 services
+
+### 🔧 Environment Configuration
+
+The `.env` file allows easy customization:
+```bash
+# Change Docker Hub username
+IMAGE_PREFIX=your-username
+
+# Change image tags
+TAG=dev        # for development
+TAG=v1.0       # for version 1.0
+TAG=staging    # for staging environment
+```
+
+### 🚀 Build and Push Commands
+
+```bash
+# Build all services with custom naming
+docker-compose build
+
+# Push all images to Docker Hub
+docker-compose push
+
+# Build and push in one command
+docker-compose build && docker-compose push
+```
+
+## 🤖 Full Automation Scripts
+
+### 🎯 Automated Image Optimization
+
+The `optimize-all.sh` script provides complete automation for optimizing all 12 microservices:
+
+```bash
+# Run full automation for all services
+./optimize-all.sh
+```
+
+**Features:**
+- ✅ **Fully automated** - processes all 12 services automatically
+- ✅ **Smart building** - builds missing images before optimization
+- ✅ **Error handling** - tracks success/failure with detailed reporting
+- ✅ **Progress tracking** - shows which services are being processed
+- ✅ **Summary report** - final statistics and next steps
+
+### 🔧 Individual Service Optimization
+
+The `slimify.sh` script handles single-service optimization:
+
+```bash
+# Optimize a single service
+./slimify.sh aalyankhan029/frontend:latest aalyankhan029/frontend-slim:latest
+```
+
 ## 🛠️ Slimify Script - Advanced Image Optimization
 
 The `slimify.sh` script uses DockerSlim to create ultra-optimized container images by analyzing runtime behavior and removing unnecessary components.
@@ -219,7 +292,7 @@ The easiest way to run the entire microservices stack is using Docker Compose:
 git clone https://github.com/AalyanKhan/google_microservices_demo.git
 cd google_microservices_demo
 
-# Build and run all services
+# Build and run all services with custom image naming
 docker-compose up --build
 
 # Run in detached mode (background)
@@ -230,6 +303,24 @@ docker-compose logs -f
 
 # Stop all services
 docker-compose down
+```
+
+### 🚀 Advanced Quick Start with Automation
+
+For the complete experience with image optimization:
+
+```bash
+# 1. Build all services with proper naming
+docker-compose build
+
+# 2. Run full automation to optimize all images
+./optimize-all.sh
+
+# 3. Push optimized images to Docker Hub
+docker-compose push
+
+# 4. Run the optimized stack
+docker-compose up -d
 ```
 
 ### Access the Application
@@ -256,41 +347,71 @@ cd ..
 
 ### Build All Services
 ```bash
-# Build all services at once
-./build-all.sh
+# Build all services at once with proper naming
+docker-compose build
 
-# Optimize all services
-for service in adservice cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice shippingservice; do
-  ./slimify.sh aalyankhan029/$service:latest aalyankhan029/$service-slim:latest
-done
+# Push all services to Docker Hub
+docker-compose push
+
+# Run full automation for all services
+./optimize-all.sh
 ```
+
+### 🤖 Automation Scripts
+
+#### Full Automation (`optimize-all.sh`)
+```bash
+# Automatically optimize all 12 services
+./optimize-all.sh
+```
+
+**What it does:**
+- ✅ Builds missing images automatically
+- ✅ Optimizes all 12 services with DockerSlim
+- ✅ Tracks success/failure with detailed reporting
+- ✅ Shows progress for each service
+- ✅ Provides final summary and next steps
+
+#### Individual Service Optimization (`slimify.sh`)
+```bash
+# Optimize a single service
+./slimify.sh aalyankhan029/frontend:latest aalyankhan029/frontend-slim:latest
+```
+
+**What it does:**
+- ✅ Uses DockerSlim for maximum optimization
+- ✅ Shows before/after size comparison
+- ✅ Handles errors gracefully
+- ✅ Provides color-coded output
 
 ## 🐳 Docker Compose Features
 
 ### Service Architecture
-The `docker-compose.yml` file includes all 11 microservices with proper networking:
+The `docker-compose.yml` file includes all 12 microservices with proper networking and custom image naming:
 
-- **Frontend** (Go) - Port 8080 - Main web interface
-- **Product Catalog Service** (Go) - Port 3550 - Product management
-- **Currency Service** (Node.js) - Port 7000 - Currency conversion
-- **Cart Service** (.NET) - Port 7070 - Shopping cart functionality
-- **Recommendation Service** (Python) - Port 8081 - Product recommendations
-- **Shipping Service** (Go) - Port 50051 - Shipping calculations
-- **Checkout Service** (Go) - Port 5050 - Order processing
-- **Ad Service** (Java) - Port 9555 - Advertisement management
-- **Payment Service** (Node.js) - Port 8082 - Payment processing
-- **Email Service** (Python) - Port 8083 - Email notifications
-- **Shopping Assistant Service** (Python) - Port 8084 - AI assistance
-- **Load Generator** (Python) - Optional traffic generator
-- **Redis Cache** (Redis) - Port 6379 - Cart data storage
+- **Frontend** (Go) - Port 8080 - `aalyankhan029/frontend:latest`
+- **Product Catalog Service** (Go) - Port 3550 - `aalyankhan029/productcatalogservice:latest`
+- **Currency Service** (Node.js) - Port 7000 - `aalyankhan029/currencyservice:latest`
+- **Cart Service** (.NET) - Port 7070 - `aalyankhan029/cartservice:latest`
+- **Recommendation Service** (Python) - Port 8081 - `aalyankhan029/recommendationservice:latest`
+- **Shipping Service** (Go) - Port 50051 - `aalyankhan029/shippingservice:latest`
+- **Checkout Service** (Go) - Port 5050 - `aalyankhan029/checkoutservice:latest`
+- **Ad Service** (Java) - Port 9555 - `aalyankhan029/adservice:latest`
+- **Payment Service** (Node.js) - Port 8082 - `aalyankhan029/paymentservice:latest`
+- **Email Service** (Python) - Port 8083 - `aalyankhan029/emailservice:latest`
+- **Shopping Assistant Service** (Python) - Port 8084 - `aalyankhan029/shoppingassistantservice:latest`
+- **Load Generator** (Python) - `aalyankhan029/loadgenerator:latest`
+- **Redis Cache** (Redis) - Port 6379 - `redis:7-alpine`
 
 ### Key Features
 
-1. **Automatic Building**: All services are built from source using their Dockerfiles
-2. **Service Discovery**: Services communicate using container names as hostnames
-3. **Dependency Management**: Services start in the correct order
-4. **Network Isolation**: All services run on a dedicated Docker network
-5. **Environment Configuration**: Proper environment variables for inter-service communication
+1. **Custom Image Naming**: All services build with proper Docker Hub naming using environment variables
+2. **Environment Configuration**: Easy customization via `.env` file for different environments
+3. **Automatic Building**: All services are built from source using their Dockerfiles
+4. **Service Discovery**: Services communicate using container names as hostnames
+5. **Dependency Management**: Services start in the correct order
+6. **Network Isolation**: All services run on a dedicated Docker network
+7. **Docker Hub Ready**: Built-in support for pushing to Docker Hub with `docker-compose push`
 
 ### Docker Compose Commands
 
@@ -459,16 +580,21 @@ docker-compose down
 
 ### Advanced Level
 1. Implement multi-stage builds for all services
-2. Use the slimify script to optimize all images
+2. Use the automation scripts to optimize all images
 3. Set up monitoring and logging
 4. Create production-ready configurations
 5. Implement security best practices
+6. Master Docker Compose with custom image naming
+7. Use environment variables for different deployment stages
 
 ### Expert Level
-1. Achieve 95%+ size reduction on all services
-2. Create custom optimization scripts
-3. Implement automated optimization pipelines
+1. Achieve 95%+ size reduction on all services using `optimize-all.sh`
+2. Create custom optimization scripts and automation
+3. Implement automated CI/CD pipelines with Docker Compose
 4. Master DockerSlim advanced features
+5. Set up automated Docker Hub publishing
+6. Create environment-specific configurations
+7. Implement advanced Docker networking and security
 
 ## 🐛 Troubleshooting
 

@@ -20,8 +20,8 @@ fi
 echo -e "${GREEN}🚀 Starting Slim optimization for image:${NC} $SOURCE_IMAGE"
 echo -e "${GREEN}🔖 Target optimized image tag:${NC} $TARGET_TAG"
 
-# Run DockerSlim container
-docker run -it --rm \
+# Run DockerSlim container (automation-friendly: removed -t flag)
+docker run --rm \
   -v /var/run/docker.sock:/var/run/docker.sock \
   dslim/slim build \
   --http-probe-off \
