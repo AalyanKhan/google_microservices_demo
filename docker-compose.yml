@@ -1,0 +1,193 @@
+version: '3.8'
+
+services:
+  # Frontend Service - Go application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
+      - CURRENCY_SERVICE_ADDR=currencyservice:7000
+      - CART_SERVICE_ADDR=cartservice:7070
+      - RECOMMENDATION_SERVICE_ADDR=recommendationservice:8080
+      - SHIPPING_SERVICE_ADDR=shippingservice:50051
+      - CHECKOUT_SERVICE_ADDR=checkoutservice:5050
+      - AD_SERVICE_ADDR=adservice:9555
+      - PAYMENT_SERVICE_ADDR=paymentservice:8080
+      - EMAIL_SERVICE_ADDR=emailservice:8080
+      - SHOPPING_ASSISTANT_SERVICE_ADDR=shoppingassistantservice:8080
+    depends_on:
+      - productcatalogservice
+      - currencyservice
+      - cartservice
+      - recommendationservice
+      - shippingservice
+      - checkoutservice
+      - adservice
+      - paymentservice
+      - emailservice
+      - shoppingassistantservice
+    networks:
+      - microservices-network
+
+  # Product Catalog Service - Go application
+  productcatalogservice:
+    build:
+      context: ./productcatalogservice
+      dockerfile: Dockerfile
+    ports:
+      - "3550:3550"
+    environment:
+      - PORT=3550
+    networks:
+      - microservices-network
+
+  # Currency Service - Node.js application
+  currencyservice:
+    build:
+      context: ./currencyservice
+      dockerfile: Dockerfile
+    ports:
+      - "7000:7000"
+    environment:
+      - PORT=7000
+    networks:
+      - microservices-network
+
+  # Cart Service - .NET application
+  cartservice:
+    build:
+      context: ./cartservice/src
+      dockerfile: Dockerfile
+    ports:
+      - "7070:7070"
+    environment:
+      - ASPNETCORE_HTTP_PORTS=7070
+      - ASPNETCORE_URLS=http://+:7070
+    networks:
+      - microservices-network
+
+  # Recommendation Service - Python application
+  recommendationservice:
+    build:
+      context: ./recommendationservice
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    environment:
+      - PORT=8080
+      - PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550
+    depends_on:
+      - productcatalogservice
+    networks:
+      - microservices-network
+
+  # Shipping Service - Go application
+  shippingservice:
+    build:
+      context: ./shippingservice
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"
+    environment:
+      - PORT=50051
+    networks:
+      - microservices-network
+
+  # Checkout Service - Go application
+  checkoutservice:
+    build:
+      context: ./checkoutservice
+      dockerfile: Dockerfile
+    ports:
+      - "5050:5050"
+    environment:
+      - PORT=5050
+      - CART_SERVICE_ADDR=cartservice:7070
+      - CURRENCY_SERVICE_ADDR=currencyservice:7000
+      - SHIPPING_SERVICE_ADDR=shippingservice:50051
+      - EMAIL_SERVICE_ADDR=emailservice:8080
+      - PAYMENT_SERVICE_ADDR=paymentservice:8080
+    depends_on:
+      - cartservice
+      - currencyservice
+      - shippingservice
+      - emailservice
+      - paymentservice
+    networks:
+      - microservices-network
+
+  # Ad Service - Java application
+  adservice:
+    build:
+      context: ./adservice
+      dockerfile: Dockerfile
+    ports:
+      - "9555:9555"
+    environment:
+      - PORT=9555
+    networks:
+      - microservices-network
+
+  # Payment Service - Node.js application
+  paymentservice:
+    build:
+      context: ./paymentservice
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+    environment:
+      - PORT=8080
+    networks:
+      - microservices-network
+
+  # Email Service - Python application
+  emailservice:
+    build:
+      context: ./emailservice
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8080"
+    environment:
+      - PORT=8080
+    networks:
+      - microservices-network
+
+  # Shopping Assistant Service - Python application
+  shoppingassistantservice:
+    build:
+      context: ./shoppingassistantservice
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8080"
+    environment:
+      - PORT=8080
+    networks:
+      - microservices-network
+
+  # Load Generator - Python application (optional)
+  loadgenerator:
+    build:
+      context: ./loadgenerator
+      dockerfile: Dockerfile
+    environment:
+      - FRONTEND_ADDR=frontend:8080
+      - USERS=10
+      - RATE=1
+    depends_on:
+      - frontend
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
+# Optional: Add volumes for persistent data if needed
+# volumes:
+#   cart-data:
+#   product-data:

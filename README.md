@@ -14,6 +14,17 @@ This project is designed to help you master:
 - **Production Considerations**: Security, performance, and monitoring
 - **Image Optimization**: Advanced techniques for reducing image sizes
 
+### Docker Compose Learning Benefits
+
+Using the provided `docker-compose.yml` file, you'll learn:
+
+- **Multi-container Orchestration**: How to manage multiple services as a single application
+- **Service Dependencies**: Understanding startup order and service relationships
+- **Environment Configuration**: Managing configuration across multiple containers
+- **Network Management**: Creating isolated networks for service communication
+- **Development Workflow**: Efficient development practices with containerized services
+- **Production Deployment**: Preparing containerized applications for production
+
 ## 🏗️ Architecture Overview
 
 This e-commerce application consists of 11 microservices:
@@ -175,21 +186,47 @@ chmod +x slimify.sh
 
 ### Prerequisites
 - Docker Desktop or Docker Engine
-- Docker Compose (optional, for orchestration)
+- Docker Compose (for orchestration)
 - Git
 
-### Quick Start
+### Quick Start with Docker Compose
+
+The easiest way to run the entire microservices stack is using Docker Compose:
+
 ```bash
 # Clone the repository
 git clone https://github.com/AalyanKhan/google_microservices_demo.git
 cd google_microservices_demo
 
+# Build and run all services
+docker-compose up --build
+
+# Run in detached mode (background)
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+```
+
+### Access the Application
+
+Once all services are running, you can access:
+
+- **Frontend**: http://localhost:8080
+- **Load Generator**: Optional, runs automatically to generate traffic
+
+### Individual Service Development
+
+```bash
 # Build a single service (example: currency service)
 cd currencyservice
 docker build -t currency-service .
 
 # Run the service
-docker run -p 8080:8080 currency-service
+docker run -p 7000:7000 currency-service
 
 # Optimize the service using slimify
 cd ..
@@ -199,12 +236,86 @@ cd ..
 ### Build All Services
 ```bash
 # Build all services at once
-./build-all.sh  # Create this script to build all services
+./build-all.sh
 
 # Optimize all services
 for service in adservice cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice shippingservice; do
   ./slimify.sh aalyankhan029/$service:latest aalyankhan029/$service-slim:latest
 done
+```
+
+## 🐳 Docker Compose Features
+
+### Service Architecture
+The `docker-compose.yml` file includes all 11 microservices with proper networking:
+
+- **Frontend** (Go) - Port 8080
+- **Product Catalog Service** (Go) - Port 3550
+- **Currency Service** (Node.js) - Port 7000
+- **Cart Service** (.NET) - Port 7070
+- **Recommendation Service** (Python) - Port 8081
+- **Shipping Service** (Go) - Port 50051
+- **Checkout Service** (Go) - Port 5050
+- **Ad Service** (Java) - Port 9555
+- **Payment Service** (Node.js) - Port 8082
+- **Email Service** (Python) - Port 8083
+- **Shopping Assistant Service** (Python) - Port 8084
+- **Load Generator** (Python) - Optional traffic generator
+
+### Key Features
+
+1. **Automatic Building**: All services are built from source using their Dockerfiles
+2. **Service Discovery**: Services communicate using container names as hostnames
+3. **Dependency Management**: Services start in the correct order
+4. **Network Isolation**: All services run on a dedicated Docker network
+5. **Environment Configuration**: Proper environment variables for inter-service communication
+
+### Docker Compose Commands
+
+```bash
+# Build and start all services
+docker-compose up --build
+
+# Start services in background
+docker-compose up -d
+
+# View service status
+docker-compose ps
+
+# View logs for specific service
+docker-compose logs frontend
+
+# View logs for all services
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes
+docker-compose down -v
+
+# Rebuild specific service
+docker-compose up --build frontend
+
+# Scale a service (example: run 3 instances of frontend)
+docker-compose up --scale frontend=3
+```
+
+### Development Workflow
+
+```bash
+# Start the stack
+docker-compose up -d
+
+# Make changes to a service
+# Rebuild and restart that service
+docker-compose up --build frontend
+
+# View logs to debug
+docker-compose logs frontend
+
+# Stop everything when done
+docker-compose down
 ```
 
 ## 📚 Docker Concepts Covered
@@ -345,6 +456,43 @@ done
 - **Build Failures**: Verify Dockerfile syntax and dependencies
 - **Service Communication**: Ensure proper service discovery
 - **Slimify Failures**: Check DockerSlim prerequisites
+
+### Docker Compose Troubleshooting
+
+```bash
+# Check if all services are running
+docker-compose ps
+
+# View logs for all services
+docker-compose logs
+
+# View logs for a specific service
+docker-compose logs frontend
+
+# Check service health
+docker-compose exec frontend curl localhost:8080/health
+
+# Restart a specific service
+docker-compose restart frontend
+
+# Rebuild and restart a service
+docker-compose up --build frontend
+
+# Check network connectivity
+docker-compose exec frontend ping productcatalogservice
+
+# View Docker networks
+docker network ls
+docker network inspect google_microservices_demo_microservices-network
+```
+
+### Common Docker Compose Issues
+
+1. **Services not starting**: Check if ports are already in use
+2. **Service communication failures**: Verify service names and network configuration
+3. **Build failures**: Ensure all Dockerfiles are present and valid
+4. **Memory issues**: Increase Docker Desktop memory allocation
+5. **Slow startup**: Some services (especially Java/.NET) take longer to start
 
 ### Debugging Commands
 ```bash
