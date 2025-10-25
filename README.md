@@ -444,6 +444,33 @@ docker-compose up --build frontend
 docker-compose up --scale frontend=3
 ```
 
+### 🎯 Load Generator Profile Configuration
+
+The load generator is configured with a Docker Compose profile, so it doesn't start automatically with the main services. This gives you control over when to run load tests.
+
+```bash
+# Start all services EXCEPT load generator (default behavior)
+docker-compose up
+
+# Start all services INCLUDING load generator
+docker-compose --profile loadgen up
+
+# Start only the load generator (assuming other services are running)
+docker-compose up loadgenerator
+
+# Start load generator in the background
+docker-compose up -d loadgenerator
+
+# Stop the load generator
+docker-compose stop loadgenerator
+```
+
+**Why use profiles?**
+- **Development**: Run services without load testing by default
+- **Testing**: Start load generator only when needed for performance testing
+- **Resource Management**: Avoid unnecessary resource usage during development
+- **Flexibility**: Easy control over when to generate traffic
+
 ### Development Workflow
 
 ```bash

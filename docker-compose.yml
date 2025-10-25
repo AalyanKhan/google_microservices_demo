@@ -209,6 +209,8 @@ services:
       - frontend
     networks:
       - microservices-network
+    profiles:
+      - loadgen
 
 networks:
   microservices-network:
