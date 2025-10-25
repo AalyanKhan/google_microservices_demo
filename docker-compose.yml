@@ -31,7 +31,6 @@ services:
       - checkoutservice
       - paymentservice
       - emailservice
-      - shoppingassistantservice
       - redis
     networks:
       - microservices-network
@@ -59,7 +58,7 @@ services:
       - "7000:7000"
     environment:
       - PORT=7000
-      - ENABLE_PROFILER=0
+      - DISABLE_PROFILER=1
     networks:
       - microservices-network
 
@@ -170,7 +169,7 @@ services:
       - "8082:8080"
     environment:
       - PORT=8080
-      - ENABLE_PROFILER=0
+      - DISABLE_PROFILER=1
     networks:
       - microservices-network
 
@@ -199,6 +198,8 @@ services:
       - PORT=8080
     networks:
       - microservices-network
+    profiles:
+      - disabled
 
   # Load Generator - Python application (optional)
   loadgenerator:
